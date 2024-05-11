@@ -5,25 +5,6 @@ class Node:
         self.left = None
         self.right = None
 
-def build_kdtree(points, depth=0):
-    if not points:
-        return None
-
-    # Select axis based on depth so that axis cycles through all valid values
-    k = len(points[0])  # Dimension of the points
-    axis = depth % k
-
-    # Sort points based on the axis and choose median as pivot element
-    points.sort(key=lambda x: x[axis])
-    median = len(points) // 2
-
-    # Create node and construct subtrees
-    node = Node(points[median], axis)
-    node.left = build_kdtree(points[:median], depth + 1)
-    node.right = build_kdtree(points[median + 1:], depth + 1)
-
-    return node
-
 def print_tree(node, level=0, side=None):
     if node is not None:
         prefix = ""
