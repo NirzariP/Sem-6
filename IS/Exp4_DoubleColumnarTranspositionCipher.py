@@ -30,12 +30,14 @@ def decrypt(cipher_text, key):
     plain_text = plain_text.rstrip('X')
     return plain_text
 
-
 plaintext = "wearediscoveredfleeatonce"
-key = "zebras"
+key1 = "zebras"
+key2 = "hi"
 
-cipher_text = encrypt(plaintext, key)
-print("Cipher text:", cipher_text)
+cipher_text1 = encrypt(plaintext, key1)
+cipher_text2 = encrypt(cipher_text1, key2)
+print("Cipher text:", cipher_text2)
 
-decrypted_text = decrypt(cipher_text, key)
-print("Decrypted text:", decrypted_text)
+decrypted_text1 = decrypt(cipher_text2, key2)
+decrypted_text2 = decrypt(decrypted_text1, key1)
+print("Decrypted text:", decrypted_text2)
