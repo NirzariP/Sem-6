@@ -12,8 +12,7 @@ def caesar_encrypt(text, shift):
 def caesar_decrypt(text, shift):
     return caesar_encrypt(text, -shift)
 
-# Example usage
-text = "vxevwlwxwlrq Flskhu"
+text = str(input("Enter a String: "))
 shift = 3
 encrypted_text = caesar_encrypt(text, shift)
 decrypted_text = caesar_decrypt(encrypted_text, shift)

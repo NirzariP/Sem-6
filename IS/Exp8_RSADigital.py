@@ -1,54 +1,67 @@
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives.serialization import load_pem_private_key, load_pem_public_key
-from cryptography.exceptions import InvalidSignature
-import base64
+import hashlib
 
-# Generate a key pair
-def generate_key_pair():
-    private_key = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=2048
-    )
-    public_key = private_key.public_key()
-    return private_key, public_key
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
 
-# Sign a message with the private key
-def sign(message, private_key):
-    signature = private_key.sign(
-        message,
-        padding.PSS(
-            mgf=padding.MGF1(hashes.SHA256()),
-            salt_length=padding.PSS.MAX_LENGTH
-        ),
-        hashes.SHA256()
-    )
-    return base64.b64encode(signature)
+def mod_inverse(a, m):
+    m0, x0, x1 = m, 0, 1
+    while a > 1:
+        q = a // m
+        m, a = a % m, m
+        x0, x1 = x1 - q * x0, x0
+    return x1 + m0 if x1 < 0 else x1
 
-# Verify a signature with the public key
-def verify(message, signature, public_key):
-    try:
-        signature_bytes = base64.b64decode(signature)
-        public_key.verify(
-            signature_bytes,
-            message,
-            padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()),
-                salt_length=padding.PSS.MAX_LENGTH
-            ),
-            hashes.SHA256()
-        )
-        return True
-    except InvalidSignature:
+def is_prime(n):
+    if n < 1:
         return False
+    for i in range(2, int(n * 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
 
-# Example usage
-private_key, public_key = generate_key_pair()
-message = b'This is a message to be signed'
-signature = sign(message, private_key)
+def generate_keypair(p, q, e):
+    if not (is_prime(p) and is_prime(q)):
+        raise ValueError("Both numbers must be prime")
+    elif p == q:
+        raise ValueError("p and q cannot be equal")
+    
+    n = p * q
+    phi = (p - 1) * (q - 1)
+    while gcd(e, phi) != 1:
+        e += 1
+    # Compute d, the modular inverse of e
+    d = mod_inverse(e, phi)
+    return ((e, n), (d, n))
 
-print(f'Message: {message}')
-print(f'Signature: {signature}')
+def rsa_signature(plaintext, public_key):
+    key, n = public_key
+    hash_value = hashlib.sha256(plaintext.encode()).hexdigest()
+    hash_int = int(hash_value, 16) % n
+    signature = pow(hash_int, key, n)
+    return signature
 
-is_valid = verify(message, signature, public_key)
-print(f'Is the signature valid? {is_valid}')
+def rsa_verification(plaintext, private_key, signature):
+    key, n = private_key
+    hash_value = hashlib.sha256(plaintext.encode()).hexdigest()
+    hash_int = int(hash_value, 16) % n
+    decrypted_msg = pow(signature, key, n)
+    if decrypted_msg == hash_int:
+        print("success")
+    else:
+        print("fail")
+    # return decrypted_msg
+
+p = int(input("Enter a prime number (p): "))
+q = int(input("Enter another prime number (q): "))
+e = int(input("Enter a value for e: "))
+plaintext = str(input("Enter the plaintext: "))
+
+public_key, private_key = generate_keypair(p, q, e)
+print("Public key:", public_key)
+print("Private key:", private_key)
+
+signature = rsa_signature(plaintext, public_key)
+verification = rsa_verification(plaintext, private_key, signature)
+print("Digital Signature:", signature)

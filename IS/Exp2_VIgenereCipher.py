@@ -1,9 +1,9 @@
-def vigenere(plain_text, key, encrypt=True):
+def vigenere(plaintext, key, encrypt = True):
     result = ""
     key_index = 0
     factor = 1 if encrypt else -1
 
-    for char in plain_text:
+    for char in plaintext:
         if char.isalpha():
             char = char.upper()
             key_char = key[key_index % len(key)].upper()
@@ -12,12 +12,14 @@ def vigenere(plain_text, key, encrypt=True):
             result += encrypted_char
         else:
             result += char
-    
     return result
 
-plain_text = str(input("Enter string: "))
+plaintext = str(input("Enter plaintext: "))
 key = str(input("Enter key: "))
-cipher_text = vigenere(plain_text, key)
-decrypted_text = vigenere(cipher_text, key, encrypt=False)
-print("Encrypted:", cipher_text)
-print("Decrypted:", decrypted_text)
+
+encrypted_text = vigenere(plaintext, key)
+decrypted_text = vigenere(encrypted_text, key, encrypt = False)
+
+print("Original Text: ", plaintext)
+print("Encrypted Text: ", encrypted_text)
+print("Decrypted Text: ", decrypted_text)

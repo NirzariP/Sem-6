@@ -28,7 +28,7 @@ def decrypt(cipher_text, key):
     return ''.join(plain_text)
 
 # Example usage
-plaintext = "we are discovered flee at once"
+plaintext = "wearediscoveredfleeatonce"
 key = "zebras"
 
 cipher_text = encrypt(plaintext, key)
