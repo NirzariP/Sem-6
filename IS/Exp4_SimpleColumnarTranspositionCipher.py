@@ -7,35 +7,35 @@ def pad_text(text, key_length):
         text += 'X' * padding_length
     return text
 
-def encrypt(plain_text, key):
+def encrypt(plaintext, key):
     key_order = sorted(range(len(key)), key=lambda k: key[k])
-    cipher_text = ''
-    plain_text = remove_spaces(plain_text)
-    plain_text = pad_text(plain_text, len(key))
+    encrypted_text = ''
+    plaintext = remove_spaces(plaintext)
+    plaintext = pad_text(plaintext, len(key))
     for i in key_order:
-        cipher_text += ''.join(plain_text[i::len(key)])
-    return cipher_text
+        encrypted_text += ''.join(plaintext[i::len(key)])
+    return encrypted_text
 
-def decrypt(cipher_text, key):
+def decrypt(encrypted_text, key):
     key_order = sorted(range(len(key)), key=lambda k: key[k])
-    cols = len(cipher_text) // len(key)
-    plain_text = [''] * len(cipher_text)
+    cols = len(encrypted_text) // len(key)
+    plaintext = [''] * len(encrypted_text)
     pos = 0
     for i in key_order:
         for j in range(cols):
-            plain_text[i + j * len(key)] = cipher_text[pos]
+            plaintext[i + j * len(key)] = encrypted_text[pos]
             pos += 1
-    plain_text = ''.join(plain_text)
+    plaintext = ''.join(plaintext)
     # Trim bogus 'X' characters
-    plain_text = plain_text.rstrip('X')
-    return plain_text
+    plaintext = plaintext.rstrip('X')
+    return plaintext
 
 
 plaintext = "wearediscoveredfleeatonce"
 key = "zebras"
 
-cipher_text = encrypt(plaintext, key)
-print("Cipher text:", cipher_text)
+encrypted_text = encrypt(plaintext, key)
+print("Cipher text:", encrypted_text)
 
-decrypted_text = decrypt(cipher_text, key)
+decrypted_text = decrypt(encrypted_text, key)
 print("Decrypted text:", decrypted_text)

@@ -1,25 +1,25 @@
-def enc_playfair(plain,matrix):
-    plain += "0"
-    plain = plain.replace('j', 'i')
-    cipher = ""
+def enc_playfair(plaintext,matrix):
+    plaintext += "0"
+    plaintext = plaintext.replace('j', 'i')
+    encrypted_text = ""
     counter = 0
     while(True):
-        if plain[counter] == "0":
+        if plaintext[counter] == "0":
             break
-        if plain[counter] == plain[counter+1] or plain[counter+1] == "0":
-            if plain[counter] == "x" and plain[counter+1] == "x":
-                plain = plain[:counter+1] + "a" + plain[counter+1:]
-            elif plain[counter] == 'x' and plain[counter+1] == '0':
-                plain = plain[:counter+1] + "a" + plain[counter+1:]
+        if plaintext[counter] == plaintext[counter+1] or plaintext[counter+1] == "0":
+            if plaintext[counter] == "x" and plaintext[counter+1] == "x":
+                plaintext = plaintext[:counter+1] + "a" + plaintext[counter+1:]
+            elif plaintext[counter] == 'x' and plaintext[counter+1] == '0':
+                plaintext = plaintext[:counter+1] + "a" + plaintext[counter+1:]
             else:
-                plain = plain[:counter+1] + "x" + plain[counter+1:]
-        tp_st = ""
+                plaintext = plaintext[:counter+1] + "x" + plaintext[counter+1:]
+        temp_state = ""
         pos = [0,0]
         for i in range(5):
             for j in range(5):
-                if matrix[i][j] == plain[counter]:
+                if matrix[i][j] == plaintext[counter]:
                     pos[0] = [i,j]
-                elif matrix[i][j] == plain[counter+1]:
+                elif matrix[i][j] == plaintext[counter+1]:
                     pos[1] = [i,j]
                 else:
                     continue
@@ -28,36 +28,36 @@ def enc_playfair(plain,matrix):
                 pos[0][1] = -1
             if pos[1][1] == 4:
                 pos[1][1] = -1
-            tp_st +=  matrix[pos[0][0]][pos[0][1]+1]
-            tp_st +=  matrix[pos[1][0]][pos[1][1]+1]
+            temp_state +=  matrix[pos[0][0]][pos[0][1]+1]
+            temp_state +=  matrix[pos[1][0]][pos[1][1]+1]
         elif pos[0][1] == pos[1][1]:
             if pos[0][0] == 4:
                 pos[0][0] = -1
             if pos[1][0] == 4:
                 pos[1][0] = -1
-            tp_st +=  matrix[pos[0][0]+1][pos[0][1]]
-            tp_st +=  matrix[pos[1][0]+1][pos[1][1]]
+            temp_state +=  matrix[pos[0][0]+1][pos[0][1]]
+            temp_state +=  matrix[pos[1][0]+1][pos[1][1]]
         else:
-            tp_st +=  matrix[pos[0][0]][pos[1][1]]
-            tp_st +=  matrix[pos[1][0]][pos[0][1]]
-        cipher += tp_st
+            temp_state +=  matrix[pos[0][0]][pos[1][1]]
+            temp_state +=  matrix[pos[1][0]][pos[0][1]]
+        encrypted_text += temp_state
         counter += 2
-    return cipher
+    return encrypted_text
  
-def dec_playfair(plain,matrix,n):
-    cipher = ""
-    plain += "0"
+def dec_playfair(plaintext,matrix,n):
+    encrypted_text = ""
+    plaintext += "0"
     counter = 0
     while(True):
-        if plain[counter] == "0":
+        if plaintext[counter] == "0":
             break
-        tp_st = ""
+        temp_state = ""
         pos = [0,0]
         for i in range(5):
             for j in range(5):
-                if matrix[i][j] == plain[counter]:
+                if matrix[i][j] == plaintext[counter]:
                     pos[0] = [i,j]
-                elif matrix[i][j] == plain[counter+1]:
+                elif matrix[i][j] == plaintext[counter+1]:
                     pos[1] = [i,j]
                 else:
                     continue
@@ -66,34 +66,34 @@ def dec_playfair(plain,matrix,n):
                 pos[0][1] = 5
             if pos[1][1] == 0:
                 pos[1][1] = 5
-            tp_st +=  matrix[pos[0][0]][pos[0][1]-1]
-            tp_st +=  matrix[pos[1][0]][pos[1][1]-1]
+            temp_state +=  matrix[pos[0][0]][pos[0][1]-1]
+            temp_state +=  matrix[pos[1][0]][pos[1][1]-1]
         elif pos[0][1] == pos[1][1]:
             if pos[0][0] == 0:
                 pos[0][0] = 5
             if pos[1][0] == 0:
                 pos[1][0] = 5
-            tp_st +=  matrix[pos[0][0]-1][pos[0][1]]
-            tp_st +=  matrix[pos[1][0]-1][pos[1][1]]
+            temp_state +=  matrix[pos[0][0]-1][pos[0][1]]
+            temp_state +=  matrix[pos[1][0]-1][pos[1][1]]
         else:
-            tp_st +=  matrix[pos[0][0]][pos[1][1]]
-            tp_st +=  matrix[pos[1][0]][pos[0][1]]
-        cipher += tp_st
+            temp_state +=  matrix[pos[0][0]][pos[1][1]]
+            temp_state +=  matrix[pos[1][0]][pos[0][1]]
+        encrypted_text += temp_state
         counter += 2
-    des = len(cipher) - 1
-    while(len(cipher) > n):
-        if cipher[des] == "x":
-            if des == len(cipher)-1:
-                cipher = cipher[:des]
-            elif cipher[des-1] == cipher[des+1]:
-                cipher = cipher[:des]+cipher[des+1:]
-        elif cipher[des] == "a":
-            if des == len(cipher)-1:
-                cipher = cipher[:des]
-            elif cipher[des-1] == 'x' and cipher[des+1]=='x':
-                cipher = cipher[:des]+cipher[des+1:]
-        des -= 1
-    return cipher
+    index = len(encrypted_text) - 1
+    while(len(encrypted_text) > n):
+        if encrypted_text[index] == "x":
+            if index == len(encrypted_text)-1:
+                encrypted_text = encrypted_text[:index]
+            elif encrypted_text[index-1] == encrypted_text[index+1]:
+                encrypted_text = encrypted_text[:index]+encrypted_text[index+1:]
+        elif encrypted_text[index] == "a":
+            if index == len(encrypted_text)-1:
+                encrypted_text = encrypted_text[:index]
+            elif encrypted_text[index-1] == 'x' and encrypted_text[index+1]=='x':
+                encrypted_text = encrypted_text[:index]+encrypted_text[index+1:]
+        index -= 1
+    return encrypted_text
  
 def create_matrix(key):
     key = key.replace('j', 'i')
@@ -124,13 +124,13 @@ def create_matrix(key):
         mat.append(row)
     return mat
  
-plain = input("Enter the plain text: ").lower()
+plaintext = input("Enter the plaintext text: ").lower()
 key = input("Enter the key: ").lower()
 matrix = create_matrix(key)
 print(matrix)
-cipher = enc_playfair(plain, matrix)
-print("The Ciper text is ", cipher)
-dec = dec_playfair(cipher, matrix, len(plain))
+encrypted_text = enc_playfair(plaintext, matrix)
+print("The Ciper text is ", encrypted_text)
+dec = dec_playfair(encrypted_text, matrix, len(plaintext))
 print("The Decrypted text is ", dec)
 if "i" in dec:
     dec = dec.replace("i","j")
